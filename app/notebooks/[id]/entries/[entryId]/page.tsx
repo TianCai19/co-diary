@@ -48,11 +48,11 @@ export default async function EntryDetailPage({
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={user.nickname} />
-      <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-10">
+      <SiteHeader nickname={user.nickname} primaryNotebookId={id} />
+      <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
         <section className="rounded-[2rem] bg-white p-8 shadow-sm">
           <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
-            <Link href="/notebooks" className="hover:text-zinc-950">我的日记本</Link>
+            <Link href="/" className="hover:text-zinc-950">首页</Link>
             <span>/</span>
             <Link href={`/notebooks/${id}`} className="hover:text-zinc-950">{entry.notebook.name}</Link>
             <span>/</span>
@@ -60,7 +60,7 @@ export default async function EntryDetailPage({
           </div>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-zinc-950">{entry.title || "无标题日记"}</h1>
           <p className="mt-3 text-sm text-zinc-500">
-            {entry.author.nickname} · {formatDateTime(entry.createdAt)}
+            <Link href={`/people/${entry.author.id}`} className="font-medium text-zinc-700 underline-offset-4 hover:underline">{entry.author.nickname}</Link> · {formatDateTime(entry.createdAt)}
           </p>
           <p className="mt-6 whitespace-pre-wrap text-lg leading-9 text-zinc-700">{entry.content}</p>
         </section>

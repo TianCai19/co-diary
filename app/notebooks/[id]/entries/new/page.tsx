@@ -27,15 +27,15 @@ export default async function NewEntryPage({
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={user.nickname} />
-      <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-10">
+      <SiteHeader nickname={user.nickname} primaryNotebookId={id} />
+      <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
         <section className="rounded-[2rem] bg-white p-8 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-medium text-emerald-700">写今日日记</p>
+              <p className="text-sm font-medium text-emerald-700">默认快速开始</p>
               <h1 className="mt-2 text-4xl font-semibold tracking-tight text-zinc-950">{payload.notebook.name}</h1>
               <p className="mt-3 max-w-2xl text-lg leading-8 text-zinc-600">
-                你今天的记录会立刻出现在该日记本的时间线中，并更新今日打卡与连续记录统计。
+                这是你最常用的动作，所以页面尽量减少跳转。写完即回到时间线，并更新今日打卡与连续记录统计。
               </p>
             </div>
             <Link href={`/notebooks/${id}`} className="rounded-full border border-zinc-300 px-5 py-3 font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">

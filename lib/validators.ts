@@ -32,3 +32,8 @@ export const commentSchema = z.object({
   content: z.string().trim().min(1, "评论不能为空").max(1000, "评论最多 1000 个字符"),
   parentId: z.string().trim().optional(),
 });
+
+export const profileSchema = z.object({
+  nickname: z.string().trim().min(2, "昵称至少 2 个字符").max(24, "昵称最多 24 个字符"),
+  bio: z.string().trim().max(160, "个人介绍最多 160 个字符").optional(),
+});

@@ -44,11 +44,16 @@ export default async function NotebookDetailPage({
   const query = await searchParams;
   const success = typeof query.success === "string" ? query.success : "";
   const error = typeof query.error === "string" ? query.error : "";
+  const authorFilter = typeof query.author === "string" ? query.author : "";
+  const filteredEntries = authorFilter
+    ? payload.notebook.entries.filter((entry) => entry.authorId === authorFilter)
+    : payload.notebook.entries;
+  const activeMember = payload.notebook.members.find((member) => member.userId === authorFilter) ?? null;
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={user.nickname} />
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-10">
+      <SiteHeader nickname={user.nickname} primaryNotebookId={id} />
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
         <section className="rounded-[2rem] bg-white p-8 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-3">
@@ -93,22 +98,37 @@ export default async function NotebookDetailPage({
           </div>
 
           <div className="mt-6 rounded-3xl border border-zinc-200 bg-zinc-50 p-5">
-            <p className="text-sm font-medium text-zinc-700">今日成员打卡状态</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm font-medium text-zinc-700">成员与日记筛选</p>
+              {activeMember ? (
+                <Link href={`/people/${activeMember.userId}`} className="text-sm font-medium text-emerald-700 underline-offset-4 hover:underline">
+                  查看 {activeMember.user.nickname} 的主页
+                </Link>
+              ) : null}
+            </div>
             <div className="mt-4 flex flex-wrap gap-2">
+              <Link href={`/notebooks/${id}`} className={`rounded-full px-3 py-2 text-sm ${!authorFilter ? "bg-emerald-600 text-white" : "bg-white text-zinc-700"}`}>
+                全部成员
+              </Link>
               {payload.notebook.members.map((member) => {
                 const checkedIn = payload.notebook.entries.some(
                   (entry) => entry.authorId === member.userId && entry.createdAt.toDateString() === new Date().toDateString(),
                 );
 
                 return (
-                  <span
+                  <Link
+                    href={`/notebooks/${id}?author=${member.userId}`}
                     key={member.userId}
                     className={`rounded-full px-3 py-2 text-sm ${
-                      checkedIn ? "bg-emerald-100 text-emerald-700" : "bg-zinc-200 text-zinc-600"
+                      authorFilter === member.userId
+                        ? "bg-emerald-600 text-white"
+                        : checkedIn
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-zinc-200 text-zinc-600"
                     }`}
                   >
                     {checkedIn ? "✓" : "✗"} {member.user.nickname}
-                  </span>
+                  </Link>
                 );
               })}
             </div>
@@ -120,18 +140,18 @@ export default async function NotebookDetailPage({
 
         <section className="grid gap-8 lg:grid-cols-[1.5fr_0.5fr]">
           <div className="space-y-5">
-            {payload.notebook.entries.length === 0 ? (
+            {filteredEntries.length === 0 ? (
               <div className="rounded-[2rem] border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-600">
-                还没有人写下第一篇日记。点击右上角“写今日日记”开始记录吧。
+                {activeMember ? `还没有找到 ${activeMember.user.nickname} 的日记。` : "还没有人写下第一篇日记。点击右上角“写今日日记”开始记录吧。"}
               </div>
             ) : (
-              payload.notebook.entries.map((entry) => {
+              filteredEntries.map((entry) => {
                 const comments = groupCommentsByParent(entry.comments);
                 return (
                   <article key={entry.id} className="rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-sm">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <p className="text-sm text-zinc-500">{entry.author.nickname} · {formatDateTime(entry.createdAt)}</p>
+                        <p className="text-sm text-zinc-500"><Link href={`/people/${entry.author.id}`} className="font-medium text-zinc-700 underline-offset-4 hover:underline">{entry.author.nickname}</Link> · {formatDateTime(entry.createdAt)}</p>
                         <h2 className="mt-1 text-2xl font-semibold text-zinc-950">{entry.title || "无标题日记"}</h2>
                       </div>
                       <Link href={`/notebooks/${id}/entries/${entry.id}`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">

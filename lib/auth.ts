@@ -13,6 +13,7 @@ export async function getCurrentUser() {
       id: true,
       email: true,
       nickname: true,
+      bio: true,
       avatarUrl: true,
       createdAt: true,
     },

@@ -77,6 +77,76 @@ export async function getUserNotebooks(userId: string) {
   });
 }
 
+export async function getHomePageData(userId: string) {
+  const notebooks = await prisma.notebook.findMany({
+    where: {
+      members: {
+        some: { userId },
+      },
+    },
+    include: {
+      members: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              nickname: true,
+              bio: true,
+            },
+          },
+        },
+        orderBy: { joinedAt: "asc" },
+      },
+      entries: {
+        take: 20,
+        orderBy: { createdAt: "desc" },
+        include: {
+          author: {
+            select: {
+              id: true,
+              nickname: true,
+            },
+          },
+          comments: {
+            select: { id: true },
+          },
+        },
+      },
+      stats: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              nickname: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const normalized = notebooks
+    .map((notebook) => {
+      const latestEntry = notebook.entries[0] ?? null;
+      return {
+        ...notebook,
+        latestEntry,
+      };
+    })
+    .sort((left, right) => {
+      const leftTime = left.latestEntry?.createdAt?.getTime() ?? left.createdAt.getTime();
+      const rightTime = right.latestEntry?.createdAt?.getTime() ?? right.createdAt.getTime();
+      return rightTime - leftTime;
+    });
+
+  const primaryNotebook = normalized[0] ?? null;
+
+  return {
+    primaryNotebook,
+    notebooks: normalized,
+  };
+}
+
 export async function getNotebookPageData(notebookId: string) {
   const notebook = await prisma.notebook.findUnique({
     where: { id: notebookId },
@@ -153,6 +223,30 @@ export async function getNotebookPageData(notebookId: string) {
   };
 }
 
+export async function getNotebookEntriesByAuthor(notebookId: string, authorId: string) {
+  return prisma.entry.findMany({
+    where: {
+      notebookId,
+      authorId,
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          nickname: true,
+          bio: true,
+        },
+      },
+      comments: {
+        select: { id: true },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
 export async function getEntryDetail(entryId: string) {
   return prisma.entry.findUnique({
     where: { id: entryId },
@@ -161,6 +255,7 @@ export async function getEntryDetail(entryId: string) {
         select: {
           id: true,
           nickname: true,
+          bio: true,
         },
       },
       notebook: {
@@ -184,6 +279,100 @@ export async function getEntryDetail(entryId: string) {
       },
     },
   });
+}
+
+export async function getPersonProfile(viewerId: string, profileUserId: string) {
+  const sharedNotebookMemberships = await prisma.notebookMember.findMany({
+    where: {
+      userId: viewerId,
+    },
+    select: {
+      notebookId: true,
+    },
+  });
+
+  const sharedNotebookIds = sharedNotebookMemberships.map((item) => item.notebookId);
+
+  const user = await prisma.user.findFirst({
+    where: {
+      id: profileUserId,
+      memberships: {
+        some: {
+          notebookId: {
+            in: sharedNotebookIds,
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      nickname: true,
+      bio: true,
+      createdAt: true,
+      memberships: {
+        where: {
+          notebookId: {
+            in: sharedNotebookIds,
+          },
+        },
+        include: {
+          notebook: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) return null;
+
+  const entries = await prisma.entry.findMany({
+    where: {
+      authorId: profileUserId,
+      notebookId: {
+        in: sharedNotebookIds,
+      },
+    },
+    include: {
+      notebook: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      comments: {
+        select: {
+          id: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const stats = await prisma.userNotebookStats.findMany({
+    where: {
+      userId: profileUserId,
+      notebookId: {
+        in: sharedNotebookIds,
+      },
+    },
+  });
+
+  return {
+    user,
+    entries,
+    stats: {
+      totalEntries: stats.reduce((sum, item) => sum + item.totalEntries, 0),
+      totalComments: stats.reduce((sum, item) => sum + item.totalComments, 0),
+      receivedComments: stats.reduce((sum, item) => sum + item.receivedComments, 0),
+      bestStreak: Math.max(0, ...stats.map((item) => item.longestStreak)),
+    },
+  };
 }
 
 export async function getNotebookStats(notebookId: string) {
