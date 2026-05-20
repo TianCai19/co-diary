@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model User {
+  id            String             @id @default(cuid())
+  email         String             @unique
+  passwordHash  String
+  nickname      String
+  avatarUrl     String?
+  emailVerified DateTime?
+  createdAt     DateTime           @default(now())
+
+  memberships   NotebookMember[]
+  entries       Entry[]
+  comments      Comment[]
+  stats         UserNotebookStats[]
+}
+
+model Notebook {
+  id         String             @id @default(cuid())
+  name       String
+  inviteCode String             @unique @default(cuid())
+  createdAt  DateTime           @default(now())
+
+  members    NotebookMember[]
+  entries    Entry[]
+  stats      UserNotebookStats[]
+}
+
+model NotebookMember {
+  userId     String
+  notebookId String
+  role       String   @default("member")
+  joinedAt   DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notebook   Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+
+  @@id([userId, notebookId])
+}
+
+model Entry {
+  id         String   @id @default(cuid())
+  title      String?
+  content    String
+  authorId   String
+  notebookId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  notebook   Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+  comments   Comment[]
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  content   String
+  authorId  String
+  entryId   String
+  parentId  String?
+  createdAt DateTime  @default(now())
+
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  entry     Entry     @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+}
+
+model UserNotebookStats {
+  userId          String
+  notebookId      String
+  totalEntries    Int      @default(0)
+  totalComments   Int      @default(0)
+  receivedComments Int     @default(0)
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastCheckinDate DateTime?
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notebook        Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+
+  @@id([userId, notebookId])
+}
