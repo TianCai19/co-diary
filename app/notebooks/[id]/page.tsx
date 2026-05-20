@@ -52,15 +52,15 @@ export default async function NotebookDetailPage({
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={user.nickname} primaryNotebookId={id} />
+      <SiteHeader nickname={user.nickname} />
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
         <section className="rounded-[2rem] bg-white p-8 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-3">
-              <p className="text-sm font-medium text-emerald-700">日记本详情</p>
+              <p className="text-sm font-medium text-emerald-700">成员与动态</p>
               <h1 className="text-4xl font-semibold tracking-tight text-zinc-950">{payload.notebook.name}</h1>
               <p className="max-w-2xl text-lg leading-8 text-zinc-600">
-                所有成员的日记对成员全员可见。你可以在这里查看大家的时间线、评论互动以及今日打卡状态。
+                这里集中看成员、今日打卡、日记动态和评论互动。
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -70,6 +70,11 @@ export default async function NotebookDetailPage({
               <Link href={`/notebooks/${id}/stats`} className="rounded-full border border-zinc-300 px-5 py-3 font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
                 查看统计
               </Link>
+              <form action={`/api/notebooks/${id}/leave`} method="post">
+                <button className="rounded-full border border-rose-200 px-5 py-3 font-medium text-rose-600 transition hover:border-rose-300 hover:bg-rose-50" type="submit">
+                  退出日记本
+                </button>
+              </form>
             </div>
           </div>
 
@@ -154,9 +159,24 @@ export default async function NotebookDetailPage({
                         <p className="text-sm text-zinc-500"><Link href={`/people/${entry.author.id}`} className="font-medium text-zinc-700 underline-offset-4 hover:underline">{entry.author.nickname}</Link> · {formatDateTime(entry.createdAt)}</p>
                         <h2 className="mt-1 text-2xl font-semibold text-zinc-950">{entry.title || "无标题日记"}</h2>
                       </div>
-                      <Link href={`/notebooks/${id}/entries/${entry.id}`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
-                        打开详情页
-                      </Link>
+                      <div className="flex flex-wrap gap-2">
+                        <Link href={`/notebooks/${id}/entries/${entry.id}`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
+                          打开详情页
+                        </Link>
+                        {entry.author.id === user.id ? (
+                          <>
+                            <Link href={`/notebooks/${id}/entries/${entry.id}/edit`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
+                              编辑
+                            </Link>
+                            <form action={`/api/notebooks/${id}/entries/${entry.id}`} method="post">
+                              <input type="hidden" name="intent" value="delete" />
+                              <button className="rounded-full border border-rose-200 px-4 py-2 text-sm font-medium text-rose-600 transition hover:border-rose-300 hover:bg-rose-50" type="submit">
+                                删除
+                              </button>
+                            </form>
+                          </>
+                        ) : null}
+                      </div>
                     </div>
                     <p className="mt-4 whitespace-pre-wrap leading-8 text-zinc-700">{entry.content}</p>
 

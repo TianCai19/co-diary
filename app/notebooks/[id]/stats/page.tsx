@@ -19,7 +19,7 @@ export default async function NotebookStatsPage({ params }: { params: Promise<{ 
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={user.nickname} primaryNotebookId={id} />
+      <SiteHeader nickname={user.nickname} />
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
         <section className="rounded-[2rem] bg-white p-8 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

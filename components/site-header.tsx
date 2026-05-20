@@ -2,10 +2,9 @@ import Link from "next/link";
 
 type SiteHeaderProps = {
   nickname?: string;
-  primaryNotebookId?: string | null;
 };
 
-export function SiteHeader({ nickname, primaryNotebookId }: SiteHeaderProps) {
+export function SiteHeader({ nickname }: SiteHeaderProps) {
   return (
     <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/90 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
@@ -21,16 +20,8 @@ export function SiteHeader({ nickname, primaryNotebookId }: SiteHeaderProps) {
               <Link className="rounded-full px-3 py-2 text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 focus-visible:bg-zinc-100" href="/">
                 首页
               </Link>
-              {primaryNotebookId ? (
-                <Link
-                  className="rounded-full bg-emerald-600 px-4 py-2 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700 sm:hidden"
-                  href={`/notebooks/${primaryNotebookId}/entries/new`}
-                >
-                  直接写
-                </Link>
-              ) : null}
-              <Link className="hidden rounded-full px-3 py-2 text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 focus-visible:bg-zinc-100 sm:inline-flex" href="/notebooks">
-                我的日记本
+              <Link className="rounded-full px-3 py-2 text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 focus-visible:bg-zinc-100" href="/notebooks">
+                日记本
               </Link>
               <Link className="rounded-full px-3 py-2 text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 focus-visible:bg-zinc-100" href="/settings">
                 设置

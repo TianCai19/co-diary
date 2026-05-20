@@ -86,12 +86,17 @@ export default async function NotebooksPage({ searchParams }: { searchParams: Se
                     ))}
                   </div>
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <Link href={`/notebooks/${notebook.id}`} className="inline-flex justify-center rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700">
-                      进入日记本
-                    </Link>
-                    <Link href={`/notebooks/${notebook.id}/entries/new`} className="inline-flex justify-center rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950 focus-visible:border-zinc-900 focus-visible:text-zinc-950">
+                    <Link href={`/notebooks/${notebook.id}/entries/new`} className="inline-flex justify-center rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700">
                       写今日日记
                     </Link>
+                    <Link href={`/notebooks/${notebook.id}`} className="inline-flex justify-center rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950 focus-visible:border-zinc-900 focus-visible:text-zinc-950">
+                      成员与动态
+                    </Link>
+                    <form action={`/api/notebooks/${notebook.id}/leave`} method="post" className="sm:ml-auto">
+                      <button className="inline-flex w-full justify-center rounded-full border border-rose-200 px-4 py-2 text-sm font-medium text-rose-600 transition hover:border-rose-300 hover:bg-rose-50" type="submit">
+                        退出日记本
+                      </button>
+                    </form>
                   </div>
                 </article>
               );

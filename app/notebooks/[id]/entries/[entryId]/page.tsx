@@ -48,20 +48,37 @@ export default async function EntryDetailPage({
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={user.nickname} primaryNotebookId={id} />
+      <SiteHeader nickname={user.nickname} />
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
         <section className="rounded-[2rem] bg-white p-8 shadow-sm">
           <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
-            <Link href="/" className="hover:text-zinc-950">首页</Link>
+            <Link href="/notebooks" className="hover:text-zinc-950">日记本</Link>
             <span>/</span>
             <Link href={`/notebooks/${id}`} className="hover:text-zinc-950">{entry.notebook.name}</Link>
             <span>/</span>
             <span>日记详情</span>
           </div>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-zinc-950">{entry.title || "无标题日记"}</h1>
-          <p className="mt-3 text-sm text-zinc-500">
-            <Link href={`/people/${entry.author.id}`} className="font-medium text-zinc-700 underline-offset-4 hover:underline">{entry.author.nickname}</Link> · {formatDateTime(entry.createdAt)}
-          </p>
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h1 className="text-4xl font-semibold tracking-tight text-zinc-950">{entry.title || "无标题日记"}</h1>
+              <p className="mt-3 text-sm text-zinc-500">
+                <Link href={`/people/${entry.author.id}`} className="font-medium text-zinc-700 underline-offset-4 hover:underline">{entry.author.nickname}</Link> · {formatDateTime(entry.createdAt)}
+              </p>
+            </div>
+            {entry.author.id === user.id ? (
+              <div className="flex flex-wrap gap-3">
+                <Link href={`/notebooks/${id}/entries/${entry.id}/edit`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
+                  编辑
+                </Link>
+                <form action={`/api/notebooks/${id}/entries/${entry.id}`} method="post">
+                  <input type="hidden" name="intent" value="delete" />
+                  <button className="rounded-full border border-rose-200 px-4 py-2 text-sm font-medium text-rose-600 transition hover:border-rose-300 hover:bg-rose-50" type="submit">
+                    删除
+                  </button>
+                </form>
+              </div>
+            ) : null}
+          </div>
           <p className="mt-6 whitespace-pre-wrap text-lg leading-9 text-zinc-700">{entry.content}</p>
         </section>
 

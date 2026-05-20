@@ -48,6 +48,6 @@ export async function POST(request: Request) {
   await ensureStatsRow(userId, notebook.id);
 
   return NextResponse.redirect(
-    new URL(`/notebooks/${notebook.id}?success=${encodeURIComponent("已加入日记本")}`, request.url),
+    new URL(`/?success=${encodeURIComponent("已加入日记本")}`, request.url),
   );
 }

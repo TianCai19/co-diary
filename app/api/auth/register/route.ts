@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     },
   });
 
-  const response = NextResponse.redirect(new URL("/notebooks?success=欢迎加入 Co-Diary", request.url));
+  const response = NextResponse.redirect(new URL(`/?success=${encodeURIComponent("欢迎加入 Co-Diary")}`, request.url));
   response.cookies.set(getSessionCookieName(), createSessionToken(user.id), getSessionCookieOptions());
   return response;
 }

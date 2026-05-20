@@ -3,20 +3,18 @@ import Link from "next/link";
 import { SignOutButton } from "@/components/sign-out-button";
 import { SiteHeader } from "@/components/site-header";
 import { requireUser } from "@/lib/auth";
-import { getHomePageData } from "@/lib/data";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export default async function SettingsPage({ searchParams }: { searchParams: SearchParams }) {
   const user = await requireUser();
-  const { primaryNotebook } = await getHomePageData(user.id);
   const params = await searchParams;
   const success = typeof params.success === "string" ? params.success : "";
   const error = typeof params.error === "string" ? params.error : "";
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={user.nickname} primaryNotebookId={primaryNotebook?.id ?? null} />
+      <SiteHeader nickname={user.nickname} />
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
         <section className="rounded-[2rem] bg-white p-8 shadow-sm">
           <p className="text-sm font-medium text-emerald-700">设置</p>
@@ -68,17 +66,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: Sea
             <section className="rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-sm">
               <h2 className="text-xl font-semibold text-zinc-950">常用操作</h2>
               <div className="mt-4 flex flex-col gap-3">
-                {primaryNotebook ? (
-                  <Link href={`/notebooks/${primaryNotebook.id}/entries/new`} className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-emerald-700">
-                    直接写今日日记
-                  </Link>
-                ) : (
-                  <Link href="/notebooks" className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-emerald-700">
-                    去创建第一个日记本
-                  </Link>
-                )}
+                <Link href="/notebooks" className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-emerald-700">
+                  去日记本列表
+                </Link>
                 <Link href="/notebooks" className="inline-flex items-center justify-center rounded-full border border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
-                  管理 / 切换日记本
+                  创建或加入日记本
                 </Link>
               </div>
             </section>

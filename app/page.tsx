@@ -5,7 +5,12 @@ import { getCurrentUser } from "@/lib/auth";
 import { formatDateTime } from "@/lib/date";
 import { getFeedForUser, getHomePageData } from "@/lib/data";
 
-export default async function Home() {
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+export default async function Home({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const success = typeof params.success === "string" ? params.success : "";
+  const error = typeof params.error === "string" ? params.error : "";
   const user = await getCurrentUser();
 
   if (!user) {
@@ -72,101 +77,21 @@ export default async function Home() {
   }
 
   const entries = await getFeedForUser(user.id);
-  const { primaryNotebook, notebooks } = await getHomePageData(user.id);
+  const { notebooks } = await getHomePageData(user.id);
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={user.nickname} primaryNotebookId={primaryNotebook?.id ?? null} />
+      <SiteHeader nickname={user.nickname} />
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
-        {primaryNotebook ? (
-          <section className="grid gap-6 rounded-[2rem] bg-white p-6 shadow-sm sm:p-8 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="space-y-5">
-              <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">
-                你好，{user.nickname}
-              </span>
-              <div>
-                <p className="text-sm text-zinc-500">默认快速开始</p>
-                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">先从你最重要的日记本开始。</h1>
-                <p className="mt-3 max-w-2xl text-lg leading-8 text-zinc-600">
-                  你现在最常用的入口应该是“直接写”。所以首页会默认把你最近活跃的日记本放在最前面，而不是先让你去找“我的日记本”。
-                </p>
-              </div>
-
-              <div className="rounded-[1.75rem] border border-emerald-100 bg-emerald-50/70 p-5">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-emerald-700">当前默认日记本</p>
-                    <h2 className="mt-2 break-words text-2xl font-semibold text-zinc-950">{primaryNotebook.name}</h2>
-                    <p className="mt-2 text-sm text-zinc-600">
-                      {primaryNotebook.members.length} 位成员 · 最近更新：{primaryNotebook.latestEntry ? formatDateTime(primaryNotebook.latestEntry.createdAt) : "还没有日记"}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3 sm:w-[220px]">
-                    <Link href={`/notebooks/${primaryNotebook.id}/entries/new`} className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700">
-                      直接写今日日记
-                    </Link>
-                    <Link href={`/notebooks/${primaryNotebook.id}`} className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-white px-5 py-3 font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
-                      再看日记本详情
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {primaryNotebook.members.map((member) => (
-                    <Link
-                      key={member.userId}
-                      href={`/people/${member.userId}`}
-                      className="rounded-full bg-white px-3 py-2 text-sm text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-950"
-                    >
-                      {member.user.nickname}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <aside className="grid gap-4">
-              <div className="rounded-[1.75rem] border border-zinc-200 p-5">
-                <p className="text-sm font-medium text-zinc-500">其他入口</p>
-                <div className="mt-4 flex flex-col gap-3">
-                  <Link href="/settings" className="inline-flex items-center justify-center rounded-full border border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
-                    去设置 / 写个人介绍
-                  </Link>
-                  <Link href="/notebooks" className="inline-flex items-center justify-center rounded-full border border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
-                    管理 / 切换日记本
-                  </Link>
-                </div>
-              </div>
-
-              {notebooks.length > 1 ? (
-                <div className="rounded-[1.75rem] border border-zinc-200 p-5">
-                  <p className="text-sm font-medium text-zinc-500">你还有 {notebooks.length - 1} 个其他日记本</p>
-                  <div className="mt-4 space-y-3">
-                    {notebooks.slice(1, 4).map((notebook) => (
-                      <div key={notebook.id} className="rounded-2xl bg-zinc-50 p-4">
-                        <p className="font-medium text-zinc-900">{notebook.name}</p>
-                        <div className="mt-3 flex gap-2">
-                          <Link href={`/notebooks/${notebook.id}/entries/new`} className="rounded-full bg-white px-3 py-2 text-sm text-zinc-700 transition hover:bg-zinc-100">
-                            直接写
-                          </Link>
-                          <Link href={`/notebooks/${notebook.id}`} className="rounded-full bg-white px-3 py-2 text-sm text-zinc-700 transition hover:bg-zinc-100">
-                            查看
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-            </aside>
-          </section>
-        ) : (
+        {success ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{success}</p> : null}
+        {error ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
+        {notebooks.length === 0 ? (
           <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="rounded-[2rem] bg-white p-8 shadow-sm">
-              <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">先开始你的第一个共同空间</span>
-              <h1 className="mt-4 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">你还没有日记本，首页直接给你开始按钮。</h1>
+              <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">你好，{user.nickname}</span>
+              <h1 className="mt-4 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">先创建或加入一个日记本。</h1>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-zinc-600">
-                不再要求你先去找“我的日记本”。你可以直接在首页创建，或者用邀请码加入一个已有空间。
+                首页先给最常用的动作：创建、加入、写日记。进入后再看成员动态和评论。
               </p>
             </div>
             <div className="grid gap-4">
@@ -186,6 +111,48 @@ export default async function Home() {
               </form>
             </div>
           </section>
+        ) : (
+          <section className="space-y-5 rounded-[2rem] bg-white p-6 shadow-sm sm:p-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-medium text-emerald-700">你的日记本</p>
+                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">选一个，直接写。</h1>
+              </div>
+              <Link href="/notebooks" className="inline-flex items-center justify-center rounded-full border border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
+                管理日记本
+              </Link>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {notebooks.map((notebook) => (
+                <article key={notebook.id} className="rounded-[1.75rem] border border-zinc-200 bg-zinc-50 p-5">
+                  <h2 className="text-2xl font-semibold text-zinc-950">{notebook.name}</h2>
+                  <p className="mt-2 text-sm text-zinc-500">
+                    {notebook.members.length} 位成员 · 最近更新：{notebook.latestEntry ? formatDateTime(notebook.latestEntry.createdAt) : "还没有日记"}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {notebook.members.map((member) => (
+                      <Link
+                        key={member.userId}
+                        href={`/people/${member.userId}`}
+                        className="rounded-full bg-white px-3 py-2 text-sm text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-950"
+                      >
+                        {member.user.nickname}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <Link href={`/notebooks/${notebook.id}/entries/new`} className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-emerald-700">
+                      写今日日记
+                    </Link>
+                    <Link href={`/notebooks/${notebook.id}`} className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-white px-4 py-3 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
+                      成员与动态
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
         )}
 
         <section className="grid gap-4">
@@ -193,7 +160,9 @@ export default async function Home() {
             <div className="rounded-[2rem] border border-dashed border-zinc-300 bg-white p-10 text-center">
               <h2 className="text-2xl font-semibold text-zinc-950">还没有动态</h2>
               <p className="mt-3 text-zinc-600">先创建一个日记本，或通过邀请码加入一个现有日记本，然后写下第一篇日记。</p>
-              {primaryNotebook ? null : <Link href="/notebooks" className="mt-6 inline-flex justify-center rounded-full bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700">查看更多日记本入口</Link>}
+              <Link href="/notebooks" className="mt-6 inline-flex justify-center rounded-full bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700">
+                去管理日记本
+              </Link>
             </div>
           ) : (
             entries.map((entry) => (
@@ -217,12 +186,14 @@ export default async function Home() {
                   <Link href={`/people/${entry.author.id}`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
                     看 Ta 的全部日记
                   </Link>
-                  <Link href={`/notebooks/${entry.notebook.id}`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
-                    查看日记本
-                  </Link>
                   <Link href={`/notebooks/${entry.notebook.id}/entries/${entry.id}`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
                     查看详情与评论
                   </Link>
+                  {entry.author.id === user.id ? (
+                    <Link href={`/notebooks/${entry.notebook.id}/entries/${entry.id}/edit`} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
+                      编辑我的日记
+                    </Link>
+                  ) : null}
                 </div>
               </article>
             ))

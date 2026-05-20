@@ -1,5 +1,28 @@
 import { prisma } from "@/lib/prisma";
-import { getStartOfToday } from "@/lib/date";
+import { getDayDiff, getStartOfDay, getStartOfToday } from "@/lib/date";
+
+function getLongestEntryStreak(dates: Date[]) {
+  if (dates.length === 0) return 0;
+
+  const normalized = Array.from(
+    new Set(dates.map((date) => getStartOfDay(date).getTime())),
+  ).sort((left, right) => left - right);
+
+  let longest = 1;
+  let current = 1;
+
+  for (let index = 1; index < normalized.length; index += 1) {
+    const diff = getDayDiff(new Date(normalized[index - 1]), new Date(normalized[index]));
+    if (diff === 1) {
+      current += 1;
+    } else {
+      current = 1;
+    }
+    longest = Math.max(longest, current);
+  }
+
+  return longest;
+}
 
 export async function getFeedForUser(userId: string) {
   return prisma.entry.findMany({
@@ -139,10 +162,7 @@ export async function getHomePageData(userId: string) {
       return rightTime - leftTime;
     });
 
-  const primaryNotebook = normalized[0] ?? null;
-
   return {
-    primaryNotebook,
     notebooks: normalized,
   };
 }
@@ -296,13 +316,26 @@ export async function getPersonProfile(viewerId: string, profileUserId: string) 
   const user = await prisma.user.findFirst({
     where: {
       id: profileUserId,
-      memberships: {
-        some: {
-          notebookId: {
-            in: sharedNotebookIds,
+      OR: [
+        {
+          memberships: {
+            some: {
+              notebookId: {
+                in: sharedNotebookIds,
+              },
+            },
           },
         },
-      },
+        {
+          entries: {
+            some: {
+              notebookId: {
+                in: sharedNotebookIds,
+              },
+            },
+          },
+        },
+      ],
     },
     select: {
       id: true,
@@ -363,14 +396,40 @@ export async function getPersonProfile(viewerId: string, profileUserId: string) 
     },
   });
 
+  const [authoredCommentsCount, receivedCommentsCount] = await Promise.all([
+    prisma.comment.count({
+      where: {
+        authorId: profileUserId,
+        entry: {
+          notebookId: {
+            in: sharedNotebookIds,
+          },
+        },
+      },
+    }),
+    prisma.comment.count({
+      where: {
+        authorId: {
+          not: profileUserId,
+        },
+        entry: {
+          authorId: profileUserId,
+          notebookId: {
+            in: sharedNotebookIds,
+          },
+        },
+      },
+    }),
+  ]);
+
   return {
     user,
     entries,
     stats: {
-      totalEntries: stats.reduce((sum, item) => sum + item.totalEntries, 0),
-      totalComments: stats.reduce((sum, item) => sum + item.totalComments, 0),
-      receivedComments: stats.reduce((sum, item) => sum + item.receivedComments, 0),
-      bestStreak: Math.max(0, ...stats.map((item) => item.longestStreak)),
+      totalEntries: entries.length,
+      totalComments: authoredCommentsCount || stats.reduce((sum, item) => sum + item.totalComments, 0),
+      receivedComments: receivedCommentsCount || stats.reduce((sum, item) => sum + item.receivedComments, 0),
+      bestStreak: stats.length > 0 ? Math.max(0, ...stats.map((item) => item.longestStreak)) : getLongestEntryStreak(entries.map((entry) => entry.createdAt)),
     },
   };
 }

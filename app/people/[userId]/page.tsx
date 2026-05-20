@@ -4,12 +4,11 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { requireUser } from "@/lib/auth";
 import { formatDate, formatDateTime } from "@/lib/date";
-import { getHomePageData, getPersonProfile } from "@/lib/data";
+import { getPersonProfile } from "@/lib/data";
 
 export default async function PersonPage({ params }: { params: Promise<{ userId: string }> }) {
   const viewer = await requireUser();
   const { userId } = await params;
-  const { primaryNotebook } = await getHomePageData(viewer.id);
   const payload = await getPersonProfile(viewer.id, userId);
 
   if (!payload) {
@@ -18,7 +17,7 @@ export default async function PersonPage({ params }: { params: Promise<{ userId:
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <SiteHeader nickname={viewer.nickname} primaryNotebookId={primaryNotebook?.id ?? null} />
+      <SiteHeader nickname={viewer.nickname} />
       <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
         <section className="rounded-[2rem] bg-white p-8 shadow-sm">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
