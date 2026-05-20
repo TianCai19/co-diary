@@ -64,7 +64,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
                 required
               />
             </label>
-            <button className="w-full rounded-2xl bg-zinc-950 px-4 py-3 font-medium text-white transition hover:bg-zinc-800 focus-visible:bg-zinc-800" type="submit">
+            <button className="w-full rounded-2xl bg-emerald-600 px-4 py-3 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700" type="submit">
               登录
             </button>
           </form>

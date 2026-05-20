@@ -36,7 +36,7 @@ export function SiteHeader({ nickname }: SiteHeaderProps) {
                 登录
               </Link>
               <Link
-                className="rounded-full bg-zinc-950 px-4 py-2 font-medium text-white transition hover:bg-zinc-800 focus-visible:bg-zinc-800"
+                className="rounded-full bg-emerald-600 px-4 py-2 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700"
                 href="/auth/register"
               >
                 免费开始

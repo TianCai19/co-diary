@@ -61,7 +61,7 @@ export default async function NewEntryPage({
             />
           </label>
           <div className="mt-6 flex justify-end">
-            <button className="rounded-full bg-zinc-950 px-5 py-3 font-medium text-white transition hover:bg-zinc-800" type="submit">
+            <button className="rounded-full bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700" type="submit">
               发布日记
             </button>
           </div>

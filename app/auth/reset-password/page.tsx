@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
             当前版本优先完成注册、登录、日记本协作、日记发布、评论回复与打卡统计。
             如需上线生产，可继续接入邮件服务实现重置密码流程。
           </p>
-          <Link href="/auth/login" className="mt-8 inline-flex rounded-full bg-zinc-950 px-5 py-3 font-medium text-white transition hover:bg-zinc-800">
+          <Link href="/auth/login" className="mt-8 inline-flex rounded-full bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700">
             返回登录
           </Link>
         </div>

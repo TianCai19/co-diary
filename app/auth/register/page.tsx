@@ -55,7 +55,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Sea
               <span className="text-sm font-medium text-zinc-700">密码</span>
               <input className="w-full rounded-2xl border border-zinc-200 px-4 py-3 transition focus:border-zinc-900" name="password" type="password" autoComplete="new-password" placeholder="至少 8 位，包含字母和数字" required />
             </label>
-            <button className="w-full rounded-2xl bg-zinc-950 px-4 py-3 font-medium text-white transition hover:bg-zinc-800 focus-visible:bg-zinc-800" type="submit">
+            <button className="w-full rounded-2xl bg-emerald-600 px-4 py-3 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700" type="submit">
               注册并进入应用
             </button>
           </form>

@@ -26,7 +26,7 @@ export default async function Home() {
                 还能看到每日打卡人数和每个人的连续记录情况。
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Link href="/auth/register" className="inline-flex justify-center rounded-full bg-zinc-950 px-6 py-3 font-medium text-white transition hover:bg-zinc-800 focus-visible:bg-zinc-800">
+                <Link href="/auth/register" className="inline-flex justify-center rounded-full bg-emerald-600 px-6 py-3 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700">
                   立即创建账号
                 </Link>
                 <Link href="/auth/login" className="inline-flex justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950 focus-visible:border-zinc-900 focus-visible:text-zinc-950">
@@ -36,10 +36,10 @@ export default async function Home() {
             </div>
 
             <div className="grid gap-4 rounded-[1.75rem] border border-white/80 bg-white/80 p-6 shadow-sm">
-              <div className="rounded-3xl bg-zinc-950 p-5 text-white">
-                <p className="text-sm text-zinc-300">今日打卡</p>
+              <div className="rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-500 p-5 text-white shadow-sm">
+                <p className="text-sm text-emerald-50/80">今日打卡</p>
                 <p className="mt-3 text-4xl font-semibold">3 / 4</p>
-                <p className="mt-2 text-sm text-zinc-400">实时看到谁已经写下今日日记</p>
+                <p className="mt-2 text-sm text-emerald-50/80">实时看到谁已经写下今日日记</p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-3xl border border-zinc-200 bg-white p-5">
@@ -87,7 +87,7 @@ export default async function Home() {
               这里聚合了你参与的所有日记本的最新内容。继续写今天的日记，或者进入某个日记本查看大家的近况。
             </p>
           </div>
-          <Link href="/notebooks" className="inline-flex justify-center rounded-full bg-zinc-950 px-5 py-3 font-medium text-white transition hover:bg-zinc-800 focus-visible:bg-zinc-800">
+          <Link href="/notebooks" className="inline-flex justify-center rounded-full bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700">
             进入我的日记本
           </Link>
         </section>
@@ -97,7 +97,7 @@ export default async function Home() {
             <div className="rounded-[2rem] border border-dashed border-zinc-300 bg-white p-10 text-center">
               <h2 className="text-2xl font-semibold text-zinc-950">还没有动态</h2>
               <p className="mt-3 text-zinc-600">先创建一个日记本，或通过邀请码加入一个现有日记本，然后写下第一篇日记。</p>
-              <Link href="/notebooks" className="mt-6 inline-flex justify-center rounded-full bg-zinc-950 px-5 py-3 font-medium text-white transition hover:bg-zinc-800 focus-visible:bg-zinc-800">
+              <Link href="/notebooks" className="mt-6 inline-flex justify-center rounded-full bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700">
                 去创建或加入日记本
               </Link>
             </div>

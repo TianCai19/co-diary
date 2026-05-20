@@ -34,7 +34,7 @@ export default async function NotebooksPage({ searchParams }: { searchParams: Se
               <h2 className="text-xl font-semibold text-zinc-950">新建日记本</h2>
               <p className="mt-2 text-sm text-zinc-500">创建后你将成为 owner，并自动获得邀请码。</p>
               <input className="mt-4 w-full rounded-2xl border border-zinc-200 px-4 py-3 transition focus:border-zinc-900" name="name" autoComplete="off" placeholder="比如：我们的每日生活…" required />
-              <button className="mt-4 w-full rounded-2xl bg-zinc-950 px-4 py-3 font-medium text-white transition hover:bg-zinc-800" type="submit">
+              <button className="mt-4 w-full rounded-2xl bg-emerald-600 px-4 py-3 font-medium text-white transition hover:bg-emerald-700" type="submit">
                 创建日记本
               </button>
             </form>
@@ -86,7 +86,7 @@ export default async function NotebooksPage({ searchParams }: { searchParams: Se
                     ))}
                   </div>
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <Link href={`/notebooks/${notebook.id}`} className="inline-flex justify-center rounded-full bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 focus-visible:bg-zinc-800">
+                    <Link href={`/notebooks/${notebook.id}`} className="inline-flex justify-center rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 focus-visible:bg-emerald-700">
                       进入日记本
                     </Link>
                     <Link href={`/notebooks/${notebook.id}/entries/new`} className="inline-flex justify-center rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950 focus-visible:border-zinc-900 focus-visible:text-zinc-950">

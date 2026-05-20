@@ -59,7 +59,7 @@ export default async function NotebookDetailPage({
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href={`/notebooks/${id}/entries/new`} className="rounded-full bg-zinc-950 px-5 py-3 font-medium text-white transition hover:bg-zinc-800">
+              <Link href={`/notebooks/${id}/entries/new`} className="rounded-full bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700">
                 写今日日记
               </Link>
               <Link href={`/notebooks/${id}/stats`} className="rounded-full border border-zinc-300 px-5 py-3 font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-950">
@@ -69,8 +69,8 @@ export default async function NotebookDetailPage({
           </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-4">
-            <div className="rounded-3xl bg-zinc-950 p-5 text-white">
-              <p className="text-sm text-zinc-300">今日打卡</p>
+            <div className="rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-500 p-5 text-white shadow-sm">
+              <p className="text-sm text-emerald-50/80">今日打卡</p>
               <p className="mt-2 text-3xl font-semibold">
                 {payload.checkedInCount}/{payload.totalMembers}
               </p>
@@ -150,7 +150,7 @@ export default async function NotebookDetailPage({
                           required
                         />
                         <div className="flex justify-end">
-                          <button className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800" type="submit">
+                          <button className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700" type="submit">
                             发布评论
                           </button>
                         </div>

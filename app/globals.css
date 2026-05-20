@@ -14,14 +14,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #09090b;
-    --foreground: #fafafa;
-    --muted: #a1a1aa;
-  }
-}
-
 * {
   box-sizing: border-box;
 }
@@ -61,7 +53,7 @@ select {
 }
 
 :is(a, button, input, textarea, select):focus-visible {
-  outline: 2px solid #111827;
+  outline: 2px solid #059669;
   outline-offset: 2px;
 }
 
